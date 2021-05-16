@@ -14,7 +14,7 @@ import (
 var (
 	successCode = flag.Int("success code", 0, "rpc reply code")
 	serv = flag.String("service", "toad_ocr_preprocessor", "service name")
-	reg  = flag.String("reg", "http://101.201.70.76:2379", "register etcd address")
+	reg  = flag.String("reg", "http://localhost:2379", "register etcd address")
 	toadOCRPreprocessorClient pb.ToadOcrPreprocessorClient
 )
 

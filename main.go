@@ -1,12 +1,47 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
+	"suvvm.work/ToadOCRTools/config"
+	"suvvm.work/ToadOCRTools/dal/db"
+	"suvvm.work/ToadOCRTools/method"
 )
 
+var (
+	dbConfig = "./conf/db_config.yaml"
+	sdkConfig = "./conf/al_sdk_config.yaml"
+)
+
+// InitConfig 初始化配置信息
+func InitConfig() {
+	str, err := os.Getwd() // 获取相对路径
+	if err != nil {
+		panic(fmt.Sprintf("filepath failed, err=%v", err))
+	}
+	dbFileName, err := filepath.Abs(filepath.Join(str, dbConfig)) // 获取db配置文件路径
+	if err != nil {
+		panic(fmt.Sprintf("filepath failed, err=%v", err))
+	}
+	conf := config.Init(dbFileName)                    // 读取db配置文件
+	if err = db.InitDB(&conf.DBConfig); err != nil { // 初始化db链接
+		panic(fmt.Sprintf("init db conn err=%v", err))
+	}
+	sdkFileName, err := filepath.Abs(filepath.Join(str, sdkConfig)) // 获取db配置文件路径
+	if err != nil {
+		panic(fmt.Sprintf("filepath failed, err=%v", err))
+	}
+	conf = config.Init(sdkFileName)
+}
+
 func main() {
+	InitConfig()
+	//log.Printf("SDK:%v", config.AppConfig.SdkConfig)
+	method.InitEmail()
 	r := gin.Default()
 	r.Use(Cors())
 	register(r)
@@ -16,6 +51,7 @@ func main() {
 	}
 }
 
+// Cors 跨域
 func Cors() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		method := c.Request.Method
@@ -34,18 +70,15 @@ func Cors() gin.HandlerFunc {
 			//允许客户端传递校验信息比如 cookie (重要)
 			c.Header("Access-Control-Allow-Credentials", "true")
 		}
-
 		//允许类型校验
 		if method == "OPTIONS" {
 			c.JSON(http.StatusOK, "ok!")
 		}
-
 		defer func() {
 			if err := recover(); err != nil {
 				log.Printf("Panic info is: %v", err)
 			}
 		}()
-
 		c.Next()
 	}
 }
