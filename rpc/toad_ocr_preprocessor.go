@@ -2,11 +2,18 @@ package rpc
 
 import (
 	"context"
+	"crypto/md5"
+	"encoding/hex"
 	"flag"
 	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/balancer/roundrobin"
 	"google.golang.org/grpc/resolver"
+	"log"
+	"strconv"
+	"suvvm.work/ToadOCRTools/dal/cluster"
+	"suvvm.work/ToadOCRTools/dal/db"
+	"suvvm.work/ToadOCRTools/model"
 	pb "suvvm.work/ToadOCRTools/rpc/idl"
 	"time"
 )
@@ -31,9 +38,18 @@ func init() {
 	toadOCRPreprocessorClient = pb.NewToadOcrPreprocessorClient(*conn)
 }
 
-func Process(netFlag string, image []byte) ([]string, error) {
-	resp, err := toadOCRPreprocessorClient.Process(context.Background(),
-		&pb.ProcessRequest{NetFlag: netFlag, Image: image})
+func Process(ctx context.Context, netFlag, appID string, image []byte) ([]string, error) {
+	req := &pb.ProcessRequest{
+		AppId: appID,
+		NetFlag: netFlag,
+		Image: image,
+	}
+	token, err :=  GetBasicToken(ctx, req.AppId, req.NetFlag + strconv.Itoa(len(req.Image)))
+	if err != nil {
+		return nil, err
+	}
+	req.BasicToken = token
+	resp, err := toadOCRPreprocessorClient.Process(context.Background(), req)
 	if err != nil {
 		return nil, err
 	}
@@ -42,4 +58,28 @@ func Process(netFlag string, image []byte) ([]string, error) {
 		return nil, err
 	}
 	return resp.Labels, nil
+}
+
+func GetBasicToken(ctx context.Context, appID, verifyStr string) (string, error) {
+	hasher := md5.New()
+	secret, err := cluster.GetKV(ctx, appID)
+	if err != nil {
+		idInt, errInner := strconv.Atoi(appID)
+		if errInner != nil {
+			log.Printf("AppID:%v not int", appID)
+			return "", err
+		}
+		appInfo, errInner := db.GetAppInfo(&model.AppInfo{ID: idInt})
+		if errInner != nil {
+			log.Printf("db get app err:%v", errInner)
+			return "", err
+		}
+		secret = appInfo.Secret
+		cluster.PutKV(ctx, appID, secret)
+	}
+	//imglen := strconv.Itoa(len(req.Image))
+	//hasher.Write([]byte(secret + req.NetFlag + imglen))
+	hasher.Write([]byte(secret + verifyStr))
+	md5Token := hex.EncodeToString(hasher.Sum(nil))
+	return md5Token, nil
 }

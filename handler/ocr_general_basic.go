@@ -95,7 +95,7 @@ func ProcessV2(ctx *gin.Context) {
 	cntLen := ctx.Request.Header.Get("Content-Length")
 	basicToken := ctx.Request.Header.Get("Basic-Token")
 	log.Printf("ct:%v bt:%v", cntLen, basicToken)
-	err = method.VerifySecret(appID, basicToken, cntLen)
+	err = method.VerifySecret(ctx ,appID, basicToken, cntLen)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{
 			"code":     -1,
@@ -104,7 +104,7 @@ func ProcessV2(ctx *gin.Context) {
 		})
 		return
 	}
-	labels, err := rpc.Process(netFlag, data)
+	labels, err := rpc.Process(ctx, netFlag, appID, data)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"code":     -1,
@@ -178,7 +178,7 @@ func Process(ctx *gin.Context) {
 		return
 	}
 	netFlag := ctx.PostForm("net_flag")
-	labels, err := rpc.Process(netFlag, data)
+	labels, err := rpc.Process(ctx, netFlag, "95501", data)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"code":     -1,
