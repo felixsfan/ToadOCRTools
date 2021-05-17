@@ -95,7 +95,7 @@ func ProcessV2(ctx *gin.Context) {
 	cntLen := ctx.Request.Header.Get("Content-Length")
 	basicToken := ctx.Request.Header.Get("Basic-Token")
 	log.Printf("ct:%v bt:%v", cntLen, basicToken)
-	err = method.VerifySecret(appID, basicToken, cntLen)
+	err = method.VerifySecret(ctx ,appID, basicToken, cntLen)
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{
 			"code":     -1,

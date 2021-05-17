@@ -6,7 +6,7 @@ DbConf:
   Hostname: ""
   Port: ""
   ConsulName: ""
-  Timeout: "500ms"
+  Timeout: "5500ms"
   ReadTimeout: "1s"
   WriteTimeout: "2s"
   MaxIdle: 100

@@ -18,4 +18,6 @@ func register(r *gin.Engine) {
 	// r.PUT("/toad_ocr/application", handler.Process)
 	r.DELETE("/toad_ocr/application", handler.ApplicationDel)
 	r.GET("/toad_ocr/application", handler.ApplicationGet)
+
+	r.GET("/toad_ocr/application/cache", handler.ApplicationCache)
 }
