@@ -59,7 +59,7 @@ func DoAddApplication(ctx context.Context, req *model.AppInfoReq) *model.AppInfo
 	if err != nil {
 		log.Printf("db.AddAppInfo err:%v", err)
 		reply.Code = 1
-		reply.Msg = "delete fail, please check the connection between the server and db"
+		reply.Msg = "add fail, please check the param and the connection between the server and db"
 		return reply
 	}
 	if err = cluster.PutKV(ctx, strconv.Itoa(appInfo.ID), appInfo.Secret); err != nil {
@@ -103,7 +103,7 @@ func DoDelApplication(ctx context.Context, req *model.AppInfoReq) *model.AppInfo
 	if err != nil {
 		log.Printf("db.AddAppInfo err:%v", err)
 		reply.Code = 1
-		reply.Msg = "add fail, please check the connection between the server and db"
+		reply.Msg = "delete fail, please check the param and connection between the server and db"
 		return reply
 	}
 	return reply
