@@ -1,15 +1,15 @@
 package method
 
 import (
+	"ToadOCRTools/dal/cluster"
+	"ToadOCRTools/dal/db"
+	"ToadOCRTools/model"
 	"context"
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
 	"log"
 	"strconv"
-	"suvvm.work/ToadOCRTools/dal/cluster"
-	"suvvm.work/ToadOCRTools/dal/db"
-	"suvvm.work/ToadOCRTools/model"
 )
 
 func VerifySecret(ctx context.Context, appID, basicToken, cntLen string) error {
@@ -32,7 +32,7 @@ func VerifySecret(ctx context.Context, appID, basicToken, cntLen string) error {
 	hasher.Write([]byte(appSecret + cntLen))
 	md5Token := hex.EncodeToString(hasher.Sum(nil))
 	fmt.Printf("md5Token:%v", md5Token)
-	if  md5Token != basicToken {
+	if md5Token != basicToken {
 		return fmt.Errorf("basic token incompatible")
 	}
 	return nil
@@ -48,14 +48,14 @@ func DoAddApplication(ctx context.Context, req *model.AppInfoReq) *model.AppInfo
 		reply.Msg = "code is not same"
 		return reply
 	}
-	appInfo, err := db.GetAppInfo(req.ToAppInfo())	// appInfo是否已经存在
+	appInfo, err := db.GetAppInfo(req.ToAppInfo()) // appInfo是否已经存在
 	if err == nil {
 		reply.Code = 1
 		reply.Msg = "app info has already existed"
 		reply.AppInfo = appInfo
 		return reply
 	}
-	appInfo, err =  db.AddAppInfo(req.ToAppInfo())
+	appInfo, err = db.AddAppInfo(req.ToAppInfo())
 	if err != nil {
 		log.Printf("db.AddAppInfo err:%v", err)
 		reply.Code = 1
@@ -99,7 +99,7 @@ func DoDelApplication(ctx context.Context, req *model.AppInfoReq) *model.AppInfo
 		reply.Msg = "remove cluster cache kv failed."
 		return reply
 	}
-	err =  db.DelAppInfo(req.ToAppInfo())
+	err = db.DelAppInfo(req.ToAppInfo())
 	if err != nil {
 		log.Printf("db.AddAppInfo err:%v", err)
 		reply.Code = 1
@@ -119,7 +119,7 @@ func DoGetApplication(ctx context.Context, req *model.AppInfoReq) *model.AppInfo
 		reply.Msg = "code is not same"
 		return reply
 	}
-	appInfo, err :=  db.GetAppInfo(req.ToAppInfo())
+	appInfo, err := db.GetAppInfo(req.ToAppInfo())
 	if err != nil {
 		log.Printf("db.AddAppInfo err:%v", err)
 		reply.Code = 1

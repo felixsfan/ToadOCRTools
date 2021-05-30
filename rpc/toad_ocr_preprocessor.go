@@ -1,6 +1,10 @@
 package rpc
 
 import (
+	"ToadOCRTools/dal/cluster"
+	"ToadOCRTools/dal/db"
+	"ToadOCRTools/model"
+	pb "ToadOCRTools/rpc/idl"
 	"context"
 	"crypto/md5"
 	"encoding/hex"
@@ -11,17 +15,13 @@ import (
 	"google.golang.org/grpc/resolver"
 	"log"
 	"strconv"
-	"suvvm.work/ToadOCRTools/dal/cluster"
-	"suvvm.work/ToadOCRTools/dal/db"
-	"suvvm.work/ToadOCRTools/model"
-	pb "suvvm.work/ToadOCRTools/rpc/idl"
 	"time"
 )
 
 var (
-	successCode = flag.Int("success code", 0, "rpc reply code")
-	serv = flag.String("service", "toad_ocr_preprocessor", "service name")
-	reg  = flag.String("reg", "http://localhost:2379", "register etcd address")
+	successCode               = flag.Int("success code", 0, "rpc reply code")
+	serv                      = flag.String("service", "toad_ocr_preprocessor", "service name")
+	reg                       = flag.String("reg", "http://localhost:2379", "register etcd address")
 	toadOCRPreprocessorClient pb.ToadOcrPreprocessorClient
 )
 
@@ -40,11 +40,11 @@ func init() {
 
 func Process(ctx context.Context, netFlag, appID string, image []byte) ([]string, error) {
 	req := &pb.ProcessRequest{
-		AppId: appID,
+		AppId:   appID,
 		NetFlag: netFlag,
-		Image: image,
+		Image:   image,
 	}
-	token, err :=  GetBasicToken(ctx, req.AppId, req.NetFlag + strconv.Itoa(len(req.Image)))
+	token, err := GetBasicToken(ctx, req.AppId, req.NetFlag+strconv.Itoa(len(req.Image)))
 	if err != nil {
 		return nil, err
 	}

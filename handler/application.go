@@ -1,13 +1,13 @@
 package handler
 
 import (
+	"ToadOCRTools/common"
+	"ToadOCRTools/dal/cluster"
+	"ToadOCRTools/method"
+	"ToadOCRTools/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
-	"suvvm.work/ToadOCRTools/common"
-	"suvvm.work/ToadOCRTools/dal/cluster"
-	"suvvm.work/ToadOCRTools/method"
-	"suvvm.work/ToadOCRTools/model"
 )
 
 func ApplicationAdd(ctx *gin.Context) {
@@ -39,8 +39,8 @@ func ApplicationDel(ctx *gin.Context) {
 func ApplicationGet(ctx *gin.Context) {
 	req := &model.AppInfoReq{}
 	reply := &model.AppInfoResp{}
-	req.PNum = ctx.DefaultQuery("p_num","")
-	req.Email = ctx.DefaultQuery("email","")
+	req.PNum = ctx.DefaultQuery("p_num", "")
+	req.Email = ctx.DefaultQuery("email", "")
 	//req.UserVerifyCode = ctx.DefaultQuery("","")
 	//req.ClientVerifyCode = ctx.DefaultQuery("","")
 	if req.Email == "" && req.PNum == "" {
@@ -55,7 +55,7 @@ func ApplicationGet(ctx *gin.Context) {
 
 func ApplicationCache(ctx *gin.Context) {
 	reply := &model.AppInfoResp{}
-	appID := ctx.DefaultQuery("app_id","")
+	appID := ctx.DefaultQuery("app_id", "")
 	if appID == "" {
 		reply.Code = common.HandlerReadBodyErr
 		reply.Msg = common.HandlerReadBodyErrMsg
@@ -69,7 +69,7 @@ func ApplicationCache(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, reply)
 		return
 	}
-	idInt, err  := strconv.Atoi(appID)
+	idInt, err := strconv.Atoi(appID)
 	if err != nil {
 		reply.Code = 1
 		reply.Msg = "app id not int"
@@ -79,7 +79,7 @@ func ApplicationCache(ctx *gin.Context) {
 	reply.Code = 0
 	reply.Msg = "success"
 	reply.AppInfo = &model.AppInfo{
-		ID: idInt,
+		ID:     idInt,
 		Secret: value,
 	}
 	ctx.JSON(http.StatusOK, reply)

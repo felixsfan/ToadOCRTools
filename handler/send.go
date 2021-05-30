@@ -1,11 +1,11 @@
 package handler
 
 import (
+	"ToadOCRTools/method"
+	"ToadOCRTools/model"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
-	"suvvm.work/ToadOCRTools/method"
-	"suvvm.work/ToadOCRTools/model"
 )
 
 func Email(ctx *gin.Context) {
@@ -24,7 +24,7 @@ func Email(ctx *gin.Context) {
 	if err := ctx.BindJSON(&req); err != nil {
 		log.Printf("%v", err)
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"code": 1,
+			"code":    1,
 			"message": "missing required parameters",
 		})
 		return
@@ -33,13 +33,13 @@ func Email(ctx *gin.Context) {
 	if err != nil {
 		log.Printf("%v", err)
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"code": 1,
+			"code":    1,
 			"message": "server mail sdk failure, please try again later",
 		})
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{
-		"code": 0,
+		"code":    0,
 		"message": "success",
 	})
 }
@@ -59,7 +59,7 @@ func Sms(ctx *gin.Context) {
 	if err := ctx.BindJSON(&req); err != nil {
 		log.Printf("%v", err)
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"code": 1,
+			"code":    1,
 			"message": "missing required parameters",
 		})
 		return
@@ -68,13 +68,13 @@ func Sms(ctx *gin.Context) {
 	if err != nil {
 		log.Printf("%v", err)
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"code": 1,
+			"code":    1,
 			"message": "server sms sdk failure, please try again later",
 		})
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{
-		"code": 0,
+		"code":    0,
 		"message": "success",
 	})
 }

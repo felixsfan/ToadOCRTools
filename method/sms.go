@@ -1,9 +1,9 @@
 package method
 
 import (
+	"ToadOCRTools/config"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/dysmsapi"
 	"log"
-	"suvvm.work/ToadOCRTools/config"
 )
 
 // SendSms 发送短信验证码

@@ -1,15 +1,16 @@
 package db
 
 import (
+	"ToadOCRTools/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
-	"suvvm.work/ToadOCRTools/config"
 )
 
 var (
 	DB *gorm.DB
 )
+
 // InitDB 初始化数据库链接
 //
 // 入参
@@ -26,13 +27,13 @@ func InitDB(dbConfig *config.MysqlConfig) error {
 		return err
 	}
 	DB = gDB
-	db , err := DB.DB()	// 获取sql.DB
+	db, err := DB.DB() // 获取sql.DB
 	if err != nil {
 		log.Printf("get sql.DB conn err=%s", err)
 		return err
 	}
-	db.SetMaxIdleConns(dbConfig.MaxIdle)	// 设置链接池最大空闲链接数
-	db.SetMaxOpenConns(dbConfig.MaxOpen)	// 设置数据库最大打开链接数
+	db.SetMaxIdleConns(dbConfig.MaxIdle) // 设置链接池最大空闲链接数
+	db.SetMaxOpenConns(dbConfig.MaxOpen) // 设置数据库最大打开链接数
 	log.Printf("init db conn sucess")
 	return nil
 }

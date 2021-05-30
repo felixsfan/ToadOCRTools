@@ -1,9 +1,9 @@
 package db
 
 import (
+	"ToadOCRTools/model"
 	"fmt"
 	"github.com/google/uuid"
-	"suvvm.work/ToadOCRTools/model"
 )
 
 // AddAppInfo 存储app id与app secret信息
@@ -14,11 +14,11 @@ import (
 //	*model.AppInfo	// 目标appInfo
 //	error		// 错误信息
 func AddAppInfo(appInfo *model.AppInfo) (*model.AppInfo, error) {
-	if appInfo.PNum == "" && appInfo.Email == "" {	// 判断appInfo是否完整
+	if appInfo.PNum == "" && appInfo.Email == "" { // 判断appInfo是否完整
 		return nil, fmt.Errorf("appInfo:missing require parameters")
 	}
 	appInfo.Secret = uuid.New().String()
-	DB.Create(appInfo)	// 执行插入操作
+	DB.Create(appInfo) // 执行插入操作
 	return appInfo, nil
 }
 
@@ -29,9 +29,9 @@ func AddAppInfo(appInfo *model.AppInfo) (*model.AppInfo, error) {
 // 返回
 //	*model.AppInfo		// 目标AppInfo完整信息
 //	error		// 错误信息
-func GetAppInfo(appInfo *model.AppInfo) (*model.AppInfo, error){
+func GetAppInfo(appInfo *model.AppInfo) (*model.AppInfo, error) {
 	var selectResp []model.AppInfo
-	if appInfo.ID != 0 {	// 根据ID查询
+	if appInfo.ID != 0 { // 根据ID查询
 		DB.Table("app_infos").Where("id=?", appInfo.ID).Select(
 			[]string{"id", "secret", "email", "p_num"}).Find(&selectResp)
 		if len(selectResp) == 0 {
@@ -60,15 +60,15 @@ func GetAppInfo(appInfo *model.AppInfo) (*model.AppInfo, error){
 // 返回
 //	error		// 错误信息
 func DelAppInfo(appInfo *model.AppInfo) error {
-	if appInfo.ID != 0 {	// 根据ID删除
+	if appInfo.ID != 0 { // 根据ID删除
 		if err := DB.Delete(appInfo).Error; err != nil {
 			return err
 		}
-	} else if appInfo.Email != "" {	// 根据email删除
+	} else if appInfo.Email != "" { // 根据email删除
 		if err := DB.Where("email=?", appInfo.Email).Delete(&model.AppInfo{}).Error; err != nil {
 			return err
 		}
-	} else {	// 根据手机号删除
+	} else { // 根据手机号删除
 		if err := DB.Where("p_num=?", appInfo.PNum).Delete(&model.AppInfo{}).Error; err != nil {
 			return err
 		}

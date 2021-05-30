@@ -1,8 +1,8 @@
 package main
 
 import (
+	"ToadOCRTools/handler"
 	"github.com/gin-gonic/gin"
-	"suvvm.work/ToadOCRTools/handler"
 )
 
 func register(r *gin.Engine) {

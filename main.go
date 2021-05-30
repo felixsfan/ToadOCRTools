@@ -1,19 +1,19 @@
 package main
 
 import (
+	"ToadOCRTools/config"
+	"ToadOCRTools/dal/db"
+	"ToadOCRTools/method"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
-	"suvvm.work/ToadOCRTools/config"
-	"suvvm.work/ToadOCRTools/dal/db"
-	"suvvm.work/ToadOCRTools/method"
 )
 
 var (
-	dbConfig = "./conf/db_config.yaml"
+	dbConfig  = "./conf/db_config.yaml"
 	sdkConfig = "./conf/al_sdk_config.yaml"
 )
 
@@ -27,7 +27,7 @@ func InitConfig() {
 	if err != nil {
 		panic(fmt.Sprintf("filepath failed, err=%v", err))
 	}
-	conf := config.Init(dbFileName)                    // 读取db配置文件
+	conf := config.Init(dbFileName)                  // 读取db配置文件
 	if err = db.InitDB(&conf.DBConfig); err != nil { // 初始化db链接
 		panic(fmt.Sprintf("init db conn err=%v", err))
 	}
